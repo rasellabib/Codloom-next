@@ -1,4 +1,6 @@
 import Hero from "@/componets/pages/home/hero"
+import ServiceSection from "@/componets/pages/home/serviceSection"
+
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -10,6 +12,7 @@ export default function Home() {
     return (
         <>
             <Hero />
+            <ServiceSection />
         </>
     )
 }
