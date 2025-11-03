@@ -412,7 +412,7 @@ p {
 }
 .loder-container svg text {
   font-size: 57px;
-  stroke-width: 2;
+  strokeWidth: 2;
   letter-spacing: -1px;
 }
 .loder-container svg text.text-body {
@@ -425,20 +425,20 @@ p {
   0% {
     fill: transparent;
     stroke: var(--color-primary-orange);
-    stroke-width: 3;
+    strokeWidth: 3;
     stroke-dashoffset: 25%;
     stroke-dasharray: 0 32%;
   }
   50% {
     fill: transparent;
     stroke: var(--color-primary-orange);
-    stroke-width: 3;
+    strokeWidth: 3;
   }
   80%,
   100% {
     fill: var(--color-primary-orange);
     stroke: transparent;
-    stroke-width: 0;
+    strokeWidth: 0;
     stroke-dashoffset: -25%;
     stroke-dasharray: 32% 0;
   }

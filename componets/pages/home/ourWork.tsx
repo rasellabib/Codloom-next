@@ -17,13 +17,12 @@ export default function OurWork() {
           <div className="Work-card xl:px-[60px] lg:px-[40px] md:px-[30px] px-[0px] mt-[45px]">
             <div className="WorkCard grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:gap-[48px] md:gap-[30px] gap-[30px]">
               <div className="cursor-pointer work-cards hover:text-[#FF6817] transition-colors duration-500">
-                <div className="work-img lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
+                <div className="work-img w-[100%] relative h-[500px] lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
                   <Image
-                    className="hover:scale-105 transition-transform duration-500"
+                    className="hover:scale-105 transition-transform duration-500 w-[100%]"
                     src="/workimg.png"
                     alt=""
-                    width={32}
-                    height={32}
+                    fill
                   />
                 </div>
                 <div className="workTitle">
@@ -34,11 +33,12 @@ export default function OurWork() {
                 </div>
               </div>
               <div className="cursor-pointer work-cards">
-                <div className="work-img lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
-                  <img
-                    className="hover:scale-105 transition-transform duration-500"
-                    src="/Assets/images/workimg1.png"
+                <div className="work-img w-[100%] relative h-[500px] lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
+                  <Image
+                    className="hover:scale-105 transition-transform duration-500 w-[100%]"
+                    src="/workimg1.png"
                     alt=""
+                    fill
                   />
                 </div>
                 <div className="workTitle">
@@ -49,11 +49,12 @@ export default function OurWork() {
                 </div>
               </div>
               <div className="cursor-pointer work-cards">
-                <div className="work-img lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
-                  <img
-                    className="hover:scale-105 transition-transform duration-500"
-                    src="/Assets/images/workimg2.png"
+                <div className="work-img w-[100%] relative h-[500px] lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
+                  <Image
+                    className="hover:scale-105 transition-transform duration-500 w-[100%]"
+                    src="/workimg2.png"
                     alt=""
+                    fill
                   />
                 </div>
                 <div className="workTitle">
@@ -64,11 +65,12 @@ export default function OurWork() {
                 </div>
               </div>
               <div className="cursor-pointer work-cards">
-                <div className="work-img lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
-                  <img
-                    className="hover:scale-105 transition-transform duration-500"
-                    src="/Assets/images/workimg3.png"
+                <div className="work-img w-[100%] relative h-[500px] lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">
+                  <Image
+                    className="hover:scale-105 transition-transform duration-500 w-[100%]"
+                    src="/workimg3.png"
                     alt=""
+                    fill
                   />
                 </div>
                 <div className="workTitle">
