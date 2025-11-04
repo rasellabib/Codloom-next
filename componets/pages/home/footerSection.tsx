@@ -1,6 +1,104 @@
+"use client";
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
+gsap.registerPlugin(ScrollTrigger);;
+
 export default function FooterSection() {
+  // const footerContentRef = useRef(null);
+  useLayoutEffect(()=>{
+    const FooterTitle = gsap.timeline({
+    scrollTrigger: {
+        trigger: '.FooterTitle',
+        scroller: 'body',
+        start: 'top 80%',
+        toggleActions: 'play none none none',
+        // markers: true,
+    },
+});
+FooterTitle.from('.FooterTitle', {
+    y: 80,
+    opacity: 0,
+    stagger: 0.5,
+    duration: 0.5,
+});
+// নিশ্চিত করুন ScrollTrigger রেজিস্টার করা আছে
+gsap.registerPlugin(ScrollTrigger);
+
+let footerBig; // টিমলাইন ধরে রাখতে
+
+ScrollTrigger.matchMedia({
+    // বড় স্ক্রীন (desktop)
+    '(min-width: 1025px)': function () {
+        // আগেরটা থাকলে পরিষ্কার করে নতুন বানাই
+        if (footerBig && footerBig.scrollTrigger) {
+            footerBig.scrollTrigger.kill();
+            footerBig.kill();
+        }
+
+        footerBig = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.last-text',
+                scroller: 'body',
+                start: 'top 100%',
+                toggleActions: 'play none none none',
+                // markers: true,
+            },
+        });
+
+        footerBig.from('.last-text', {
+            y: 100,
+            delay: 0.4,
+            opacity: 0,
+            stagger: 0,
+            duration: 0.7,
+        });
+
+        // cleanup function — matchMedia প্রয়োজন মত কল করবে
+        return () => {
+            if (footerBig && footerBig.scrollTrigger) {
+                footerBig.scrollTrigger.kill();
+                footerBig.kill();
+            }
+        };
+    },
+
+    // tablet এবং তার নিচে
+    '(max-width: 1024px)': function () {
+        if (footerBig && footerBig.scrollTrigger) {
+            footerBig.scrollTrigger.kill();
+            footerBig.kill();
+        }
+
+        footerBig = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.last-text',
+                scroller: 'body',
+                start: 'top 100%',
+                toggleActions: 'play none none none',
+                // markers: true,
+            },
+        });
+
+        footerBig.from('.last-text', {
+            y: 100,
+            delay: 0.4,
+            opacity: 0,
+            stagger: 0,
+            duration: 0.7,
+        });
+
+        return () => {
+            if (footerBig && footerBig.scrollTrigger) {
+                footerBig.scrollTrigger.kill();
+                footerBig.kill();
+            }
+        };
+    },
+});
+  })
   return (
     <>
       <footer id="Footer">
@@ -12,10 +110,6 @@ export default function FooterSection() {
                   <div className="flex lg:justify-start justify-center">
                     <button className="title py-[4px] px-[12px] bg-white rounded-full md:mb-0 mb-[20px]">
                       <div className="h6 flex items-center gap-[8px]">
-                        <div
-                          className="w-[8px] h-[8px] rounded-full"
-                          //   style="background-color: var(--token-dbfcc30d-0b90-431b-b6f2-ed9e705de2ea, rgb(97, 197, 84))"
-                        ></div>
                         Open for new work
                       </div>
                     </button>
@@ -39,11 +133,11 @@ export default function FooterSection() {
                   <div className="footer-image">
                     <div
                       className="meImg lg:w-[212px] md:w-[400px] lg:h-[210px] md:h-[360px] h-[300px] rounded-[20px] overflow-hidden mt-[35px]"
-                      //   style="background: linear-gradient(180deg, #514f52 0%, #121113 100%)"
+                      //   style=""
                     >
                       <img
                         className="h-full object-cover"
-                        src="/Assets/images/small.png"
+                        src="/small.png"
                         alt=""
                       />
                     </div>

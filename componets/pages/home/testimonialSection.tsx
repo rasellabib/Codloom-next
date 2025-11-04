@@ -1,9 +1,54 @@
+"use client";
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function TestimonialSection() {
+  const sectionRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+          toggleActions: "play none none none",
+          // markers: true,
+        },
+      });
+
+      tl.from(".Testimonial-title", {
+        y: 80,
+        opacity: 0,
+        duration: 0.5,
+      });
+
+      tl.from(
+        ".testimonial-img, .testimonial-content",
+        {
+          y: 100,
+          opacity: 0,
+          stagger: 0.2,
+          duration: 0.5,
+        },
+        "<0.1"
+      );
+    }, sectionRef);
+
+    return () => {
+      // clean up GSAP context and ScrollTrigger instances
+      ctx.revert();
+    };
+  }, []);
+
   return (
     <>
-      <section id="Testimonial">
+      <section id="Testimonial" ref={sectionRef}>
         <div className="container">
           <div className="bg-[#F7F7F5] rounded-[30px] xl:px-[60px] lg:px-[40px] md:px-[30px] px-[20px] md:py-[80px] py-[50px] mt-[80px]">
             <div className="Testimonial-title tite-sec flex justify-center flex-col gap-[16px]">
@@ -35,16 +80,16 @@ export default function TestimonialSection() {
                   <div className="star mb-[16px] relative h-[24px] w-[120px]">
                     <Image
                       src="/Stars.jpg"
-                      alt=""
+                      alt="stars"
                       fill
                       style={{ objectFit: "contain" }}
                     />
                   </div>
 
                   <h4 className="text-[#777777] lexend leading-[1.41]">
-                    I've had the pleasure of collaborating with Design Monks for
-                    a while now on my new project. They're lightning-quick in
-                    addressing any questions or feedback I have, and they
+                    I{"'"}ve had the pleasure of collaborating with Design Monks
+                    for a while now on my new project. They're lightning-quick
+                    in addressing any questions or feedback I have, and they
                     consistently go the extra mile to make sure I'm thrilled
                     with the final outcome. I wholeheartedly endorse them.
                   </h4>
@@ -62,7 +107,7 @@ export default function TestimonialSection() {
                     <Image
                       className="md:w-[100%] w-[80%]"
                       src="/testi-logo.png"
-                      alt=""
+                      alt="logo"
                       fill
                       style={{ objectFit: "contain" }}
                     />

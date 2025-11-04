@@ -1,11 +1,40 @@
-import Image from "next/image";
+"use client";
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function ServiceSection() {
+  const titleRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!titleRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.from(titleRef.current, {
+        y: 60,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: "top 70%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
   return (
     <>
       <section id="WhatIDo">
         <div className="container bg-[#F7F7F5] rounded-[30px] xl:py-[80px] lg:py-[60px] md:py-[60px] py-[50px] xl:px-[60px] lg:px-[40px] md:px-[30px] px-[20px]">
-          <div className="WhatIDoTitle tite-sec flex justify-center flex-col gap-[16px]">
+          <div
+            ref={titleRef}
+            className="WhatIDoTitle tite-sec flex justify-center flex-col gap-[16px]"
+          >
             <button className="title py-[4px] px-[12px] border-[1px] border-[#FF6817] text-[#FF6817] rounded-full m-auto">
               <div className="h6">What We Do</div>
             </button>
