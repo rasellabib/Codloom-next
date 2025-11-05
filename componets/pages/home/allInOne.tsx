@@ -14,9 +14,10 @@ import ServicesSection from "./ServicesSection";
 import ProjectsSection from "./ProjectsSection";
 import AboutSection from "./AboutSection";
 import StickyLink from "./StickyLink";
-import TestimonialSection from "./TestimonialSection";
+
 import gsap from "gsap";
 import { ScrollTrigger, ScrollSmoother, SplitText } from "gsap/all";
+import TestimonialSection from "./TestimonialSection";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
