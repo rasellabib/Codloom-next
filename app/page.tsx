@@ -1,6 +1,7 @@
 import { Metadata } from "next";
-import AllInOne from "@/componets/pages/all-Page/allInOne";
-import NavBar from "@/componets/pages/home/navBar";
+import AllInOne from "@/componets/pages/home/allInOne";
+
+// import Navbar from "@/componets/pages/home/navBar";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <NavBar />
+ 
       <AllInOne />
     </>
   );
