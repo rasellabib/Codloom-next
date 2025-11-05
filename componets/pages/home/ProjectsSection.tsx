@@ -1,8 +1,51 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import ProjectCard from "./ProjectCard";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Projects Section Component
+gsap.registerPlugin(ScrollTrigger);
+
 const ProjectsSection = ({ handleSmoothScroll }) => {
+  const sectionRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const OurWork = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#OurWork",
+          start: "top 60%",
+          toggleActions: "play none none none",
+          // markers: true,
+        },
+      });
+
+      OurWork.from(".OurWork-tite", {
+        y: 60,
+        opacity: 0,
+        duration: 0.5,
+      });
+
+      gsap.utils.toArray(".WorkCard .work-cards").forEach((card, i) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: "top 80%",
+            toggleActions: "play none none none",
+            // markers: true,
+          },
+          y: 60,
+          opacity: 0,
+          duration: 0.8,
+          delay: i * 0.2,
+        });
+      });
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   const projects = [
     {
       title: "Lever Edge",
@@ -27,7 +70,7 @@ const ProjectsSection = ({ handleSmoothScroll }) => {
   ];
 
   return (
-    <section id="OurWork">
+    <section id="OurWork" ref={sectionRef}>
       <div className="container p-tb">
         <div className="tite-sec OurWork-tite flex justify-center flex-col gap-[16px]">
           <button className="title py-[4px] px-[12px] border-[1px] border-[#FF6817] text-[#FF6817] rounded-full m-auto">

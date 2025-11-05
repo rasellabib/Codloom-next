@@ -1,10 +1,108 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import ContactForm from "./ContactForm";
+import gsap from "gsap";
+import { ScrollTrigger, ScrollSmoother, SplitText } from "gsap/all";
 
-// Footer Component
+// রেজিস্টার প্লাগইন (একবার করে রাখা ঠিক)
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+
 const FooterSec = ({ handleSmoothScroll }) => {
+  const rootRef = useRef(null);
+
+  useLayoutEffect(() => {
+    // safety: যদি ScrollTrigger না থাকে তো কিছু না কর
+    if (typeof ScrollTrigger === "undefined") return;
+
+    const ctx = gsap.context(() => {
+      // ছোট টাইটেল অ্যানিমেশন
+      const FooterTitle = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".FooterTitle",
+          start: "top 80%",
+          toggleActions: "play none none none",
+          // markers: true,
+        },
+      });
+
+      FooterTitle.from(".FooterTitle", {
+        y: 80,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.5,
+      });
+
+      // responsive টিমলাইনগুলো matchMedia দিয়ে
+      ScrollTrigger.matchMedia({
+        // Desktop
+        "(min-width: 1025px)": function () {
+          const footerBig = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".last-text",
+              start: "top 100%",
+              toggleActions: "play none none none",
+              // markers: true,
+            },
+          });
+
+          footerBig.from(".last-text", {
+            y: 100,
+            delay: 0.4,
+            opacity: 0,
+            duration: 0.7,
+          });
+
+          // matchMedia will call returned cleanup automatically when breakpoint changes
+          return () => {
+            if (footerBig && footerBig.scrollTrigger) {
+              footerBig.scrollTrigger.kill();
+              footerBig.kill();
+            }
+          };
+        },
+
+        // Tablet and smaller
+        "(max-width: 1024px)": function () {
+          const footerSmall = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".last-text",
+              start: "top 100%",
+              toggleActions: "play none none none",
+              // markers: true,
+            },
+          });
+
+          footerSmall.from(".last-text", {
+            y: 100,
+            delay: 0.4,
+            opacity: 0,
+            duration: 0.7,
+          });
+
+          return () => {
+            if (footerSmall && footerSmall.scrollTrigger) {
+              footerSmall.scrollTrigger.kill();
+              footerSmall.kill();
+            }
+          };
+        },
+      }); // end matchMedia
+    }, rootRef);
+
+    // cleanup on unmount
+    return () => {
+      // revert context (kills animations & ScrollTriggers created inside)
+      try {
+        ctx.revert();
+      } catch (e) {
+        // ignore
+      }
+      // extra safety: remove any leftover scrolltriggers created elsewhere (optional)
+      // ScrollTrigger.getAll().forEach((st) => st.kill());
+    };
+  }, []); // একবার চালবে
+
   return (
-    <footer id="Footer">
+    <footer id="Footer" ref={rootRef}>
       <div className="container rounded-[30px] footer-background">
         <div className="xl:px-[60px] lg:px-[40px] md:px-[30px] px-[20px] lg:py-[80px] md:py-[60px] py-[60px] grid grid-cols-1 lg:grid-cols-12 gap-4 gap-y-[50px]">
           <div className="left-side lg:col-start-1 lg:col-end-6 order-1 md:order-none">
@@ -31,6 +129,7 @@ const FooterSec = ({ handleSmoothScroll }) => {
                   </h5>
                 </div>
               </div>
+
               <div className="flex flex-col lg:items-start items-center">
                 <div className="footer-image">
                   <div className="meImg lg:w-[212px] md:w-[400px] lg:h-[210px] md:h-[360px] h-[300px] rounded-[20px] overflow-hidden mt-[35px] bg-gradient-to-b from-gray-600 to-gray-900 flex items-center justify-center text-white">
@@ -41,13 +140,15 @@ const FooterSec = ({ handleSmoothScroll }) => {
                     />
                   </div>
                 </div>
+
                 <div className="footer-img-name-title md:text-center lg:text-start text-center">
                   <h4 className="mt-[14px] font-semibold">Mehedi Hasan</h4>
                   <h6 className="text-[#131313a3] mt-[2px]">
                     Founder, Codloom
                   </h6>
                 </div>
-                <div className="footer-social flex flex-col sm:flex-row items-center justify-center gap-[12px] sm:gap-[8px] mt-[24px] justify-center lg:justify-start">
+
+                <div className="footer-social flex flex-col sm:flex-row items-center gap-[12px] sm:gap-[8px] mt-[24px] justify-center lg:justify-start">
                   <div className="footerBtn">
                     <button
                       className="bg-black text-white font-semibold px-[24px] py-[10px] rounded-full cursor-pointer"
@@ -62,10 +163,14 @@ const FooterSec = ({ handleSmoothScroll }) => {
                       </a>
                     </button>
                   </div>
+
                   <div className="social flex gap-[8px]">
+                    {/* Example social icons - kept as inline SVGs previously.
+                        Per your request, SVG contents removed and replaced with comments.
+                        Paste your original SVG markup here when you want them back. */}
                     <a
                       href="#"
-                      className="mail social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center cursor-pointer items-center"
+                      className="mail social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center items-center"
                     >
                       <svg
                         className="up-icon w-[20px] sm:w-[26px] h-auto"
@@ -126,7 +231,8 @@ const FooterSec = ({ handleSmoothScroll }) => {
                         />
                       </svg>
                     </a>
-                    <a className="whatsapp social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center cursor-pointer items-center">
+
+                    <a className="whatsapp social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center items-center">
                       <svg
                         className="up-icon w-[20px] sm:w-[26px] h-auto"
                         viewBox="0 0 26 26"
@@ -172,7 +278,8 @@ const FooterSec = ({ handleSmoothScroll }) => {
                         </defs>
                       </svg>
                     </a>
-                    <a className="linkedin social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center cursor-pointer items-center">
+
+                    <a className="linkedin social-icon bg-white w-[40px] h-[40px] sm:w-[52px] sm:h-[52px] rounded-full flex justify-center items-center">
                       <svg
                         className="up-icon w-[20px] sm:w-[26px] h-auto"
                         viewBox="0 0 24 24"
@@ -239,12 +346,13 @@ const FooterSec = ({ handleSmoothScroll }) => {
               </div>
             </div>
           </div>
+
           <div className="right-side xl:ml-[100px] lg:col-start-6 lg:col-end-13 order-2 md:order-none">
             <ContactForm />
           </div>
         </div>
 
-        <div className="last-text lg:mt-[40px] mt-[0px]">
+        <div className="last-text lg:mt-[40px] mt-[0px] pb-[100px]">
           <svg
             width="1344"
             height="auto"

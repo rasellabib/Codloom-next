@@ -1,8 +1,37 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import ServiceCard from "./ServiceCard";
+import gsap from "gsap";
 
-// Services Section Component
+
 const ServicesSection = () => {
+  const sectionRef = useRef(null);
+
+  useLayoutEffect(() => {
+    // gsap.context scopes selectors to this component (safer with React)
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".WhatIDoTitle",
+          start: "top 70%",
+          toggleActions: "play none none none",
+          // markers: true,
+        },
+      });
+
+      tl.from(".WhatIDoTitle", {
+        y: 60,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+      });
+    }, sectionRef);
+
+    return () => {
+      // cleanup: kill ScrollTrigger instances created in this context
+      ctx.revert();
+    };
+  }, []);
+
   const services = [
     {
       title: "Logo & Branding",
@@ -32,7 +61,7 @@ const ServicesSection = () => {
   ];
 
   return (
-    <section id="WhatIDo">
+    <section id="WhatIDo" ref={sectionRef}>
       <div className="container bg-[#F7F7F5] rounded-[30px] xl:py-[80px] lg:py-[60px] md:py-[60px] py-[50px] xl:px-[60px] lg:px-[40px] md:px-[30px] px-[20px]">
         <div className="WhatIDoTitle tite-sec flex justify-center flex-col gap-[16px]">
           <button className="title py-[4px] px-[12px] border-[1px] border-[#FF6817] text-[#FF6817] rounded-full m-auto">

@@ -7,7 +7,7 @@ const FAQItem = ({ item, index, activeAccordion, toggleAccordion }) => {
         className="w-full flex items-center justify-between gap-4 py-7 pt-0 pr-4 pl-0 focus:outline-none"
         onClick={() => toggleAccordion(index)}
       >
-        <p className="font-bold text-start text-[#131313] leading-tight">
+        <p className="text-start text-[#131313] leading-tight">
           {item.question}
         </p>
         <span className="circle ml-4 shrink-0 relative">

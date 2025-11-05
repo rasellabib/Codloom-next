@@ -16,9 +16,11 @@ const AboutSection = () => {
                 </div>
                 <h3 className="text-white">
                   Strategic design to
+                  <br />
                   <span className="castoro italic text-[#FF6817]">
                     elevate, transform
                   </span>
+                  <br />
                   and scale your coaching practice
                 </h3>
               </div>

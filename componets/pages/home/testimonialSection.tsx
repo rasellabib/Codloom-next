@@ -1,9 +1,53 @@
-import React from "react";
+import gsap from "gsap";
+import React, { useLayoutEffect, useRef } from "react";
+import { ScrollTrigger } from "gsap/all";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Testimonial Section Component
 const TestimonialSection = () => {
+  const rootRef = useRef(null);
+
+  useLayoutEffect(() => {
+    // safety: যদি ScrollTrigger না থাকে তাহলে কিছু না করা
+    if (typeof ScrollTrigger === "undefined") return;
+
+    const ctx = gsap.context(() => {
+      const Testimonial = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#Testimonial",
+          start: "top 70%",
+          toggleActions: "play none none none",
+          // markers: true,
+        },
+      });
+
+      Testimonial.from(".Testimonial-title", {
+        y: 80,
+        opacity: 0,
+        duration: 0.5,
+      });
+
+      Testimonial.from(".testimonial-img, .testimonial-content", {
+        y: 100,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 0.5,
+      });
+    }, rootRef);
+
+    return () => {
+      // cleanup সব অ্যানিমেশন/ScrollTrigger-কে rever করে দেয়
+      try {
+        ctx.revert();
+      } catch (e) {
+        // ignore
+      }
+    };
+  }, []);
+
   return (
-    <section id="Testimonial">
+    <section id="Testimonial" ref={rootRef}>
       <div className="container">
         <div className="bg-[#F7F7F5] rounded-[30px] xl:px-[60px] lg:px-[40px] md:px-[30px] px-[20px] md:py-[80px] py-[50px] mt-[80px]">
           <div className="Testimonial-title tite-sec flex justify-center flex-col gap-[16px]">

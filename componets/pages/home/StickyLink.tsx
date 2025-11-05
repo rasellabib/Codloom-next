@@ -10,6 +10,7 @@ const StickyLink = ({ isLinkVisible, handleSmoothScroll }) => {
             <a
               href="#WhatIDo"
               className="cl-scroll-btn cal-sans h6"
+              data-text="Service"
               onClick={(e) => handleSmoothScroll(e, "#WhatIDo")}
             >
               <span>Services</span>
@@ -17,6 +18,7 @@ const StickyLink = ({ isLinkVisible, handleSmoothScroll }) => {
             <a
               href="#OurWork"
               className="cl-scroll-btn cal-sans h6"
+              data-text="Projects"
               onClick={(e) => handleSmoothScroll(e, "#OurWork")}
             >
               <span>Projects</span>
@@ -24,6 +26,7 @@ const StickyLink = ({ isLinkVisible, handleSmoothScroll }) => {
             <a
               href="#Testimonial"
               className="cl-scroll-btn cal-sans h6"
+              data-text="Testimonials"
               onClick={(e) => handleSmoothScroll(e, "#Testimonial")}
             >
               <span>Testimonials</span>

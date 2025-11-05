@@ -1,10 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export const Providers = () => {
-  return (
-    <div>providers</div>
-  )
-}
-
-
-
+  return <div>providers</div>;
+};

@@ -1,6 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { Menu, X } from "lucide-react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+  useCallback,
+} from "react";
+
 import FooterSec from "./FooterSec";
 import FAQSection from "./FAQSection";
 import HeroSection from "./HeroSection";
@@ -10,15 +16,10 @@ import AboutSection from "./AboutSection";
 import StickyLink from "./StickyLink";
 import TestimonialSection from "./TestimonialSection";
 import gsap from "gsap";
+import { ScrollTrigger, ScrollSmoother, SplitText } from "gsap/all";
 
-import { ScrollTrigger } from "gsap/all";
-import { ScrollSmoother } from "gsap/all";
-import { SplitText } from "gsap/all";
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
-gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(ScrollSmoother);
-gsap.registerPlugin(SplitText);
-// Header Component
 const Header = ({
   isNavExpanded,
   isItemsExpanded,
@@ -139,7 +140,7 @@ const Header = ({
                   href="#OurWork"
                   className="cl-scroll-btn cal-sans h6"
                   onClick={(e) => handleSmoothScroll(e, "#OurWork")}
-                  data-text="Projects"
+                  data-text="Project"
                 >
                   <span>Projects</span>
                 </a>
@@ -159,7 +160,7 @@ const Header = ({
               className={`navBtn ${isItemsExpanded ? "navItems-expanded" : ""}`}
             >
               <button
-                className="cl-scroll-btn bg-black text-white font-semibold px-[24px] py-[10px] h5 rounded-full cursor-pointer"
+                className="cl-scroll-btn bg-black text-white  px-[24px] py-[10px] h5 rounded-full cursor-pointer"
                 onClick={(e) => handleSmoothScroll(e, "#Footer")}
                 data-text="Book a Call"
               >
@@ -186,7 +187,6 @@ const Header = ({
   );
 };
 
-// Mobile Menu Component
 const MobileMenu = ({ isMenuOpen, handleMobileMenuClick }) => {
   return (
     <div
@@ -231,26 +231,27 @@ const MobileMenu = ({ isMenuOpen, handleMobileMenuClick }) => {
   );
 };
 
-// Main App Component
 const CodloomWebsite = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [isItemsExpanded, setIsItemsExpanded] = useState(false);
   const [isLinkVisible, setIsLinkVisible] = useState(false);
 
+  // smoother ref so we can use smoother.scrollTo(...) from handlers
+  const smootherRef = useRef(null);
+  // ref for gsap.context scoping
+  const rootRef = useRef(null);
+
   useEffect(() => {
-    // Nav expansion animation
     setTimeout(() => setIsNavExpanded(true), 1800);
     setTimeout(() => setIsItemsExpanded(true), 2200);
 
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Scroll listener for cl-link section
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.body.scrollHeight - window.innerHeight;
-      const scrollPercent = (scrollTop / docHeight) * 100;
+      const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       setIsLinkVisible(scrollPercent >= 15 && scrollPercent <= 85);
     };
 
@@ -260,47 +261,98 @@ const CodloomWebsite = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    if (!isMenuOpen) {
-      document.body.style.overflow = "hidden";
+    if (!isMenuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+  };
+
+  // UPDATED: handleSmoothScroll uses smoother if available, otherwise falls back to native
+  const handleSmoothScroll = useCallback((e, href) => {
+    e && e.preventDefault();
+    const target = href?.startsWith("#") ? href : `#${href}`;
+    const targetId = target.slice(1);
+
+    // if ScrollSmoother exists and was created, use its scrollTo
+    if (
+      smootherRef.current &&
+      typeof smootherRef.current.scrollTo === "function"
+    ) {
+      // smoother.scrollTo accepts selector, pixels, or numeric position
+      smootherRef.current.scrollTo(`#${targetId}`, {
+        // duration in seconds (tweak as needed)
+        duration: 0.8,
+        // offset example if you have a fixed header: y: -80
+        offset: 0,
+      });
     } else {
-      document.body.style.overflow = "";
+      // fallback
+      const el = document.getElementById(targetId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
-
-  const handleSmoothScroll = (e, href) => {
-    e.preventDefault();
-    const targetId = href.slice(1);
-    const targetEl = document.getElementById(targetId);
-
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
+  }, []);
 
   const handleMobileMenuClick = (e, href) => {
     e.preventDefault();
-    const targetId = href.slice(1);
-    const targetEl = document.getElementById(targetId);
-
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
+    handleSmoothScroll(null, href);
     setTimeout(() => {
       setIsMenuOpen(false);
       document.body.style.overflow = "";
     }, 200);
   };
+
+  // CREATE & CLEANUP ScrollSmoother with gsap.context
   useLayoutEffect(() => {
-    const smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper", // the wrapper element
-      content: "#smooth-content", // the content element inside wrapper
-      smooth: 1, // the smoothness (1 = default)
-      effects: true, // allows data-speed/data-lag effects on elements
-    });
-  });
+    // ensure DOM ids exist
+    const wrapper = document.getElementById("smooth-wrapper");
+    const content = document.getElementById("smooth-content");
+    if (!wrapper || !content || typeof ScrollSmoother === "undefined") {
+      // nothing to do if elements or plugin missing
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // create smoother and keep ref
+      try {
+        const smoother = ScrollSmoother.create({
+          wrapper: "#smooth-wrapper",
+          content: "#smooth-content",
+          smooth: 1,
+          effects: true,
+          normalizeScroll: true,
+        });
+        smootherRef.current = smoother;
+
+        // If you use ScrollTrigger that relies on the scroller, refresh once
+        ScrollTrigger.addEventListener("refreshInit", () => {
+          /* optional hooks */
+        });
+        ScrollTrigger.refresh();
+      } catch (err) {
+        // 가능합니다: create() फেইল করলে এখানে লগ দেখাবে
+        // console.warn("ScrollSmoother init failed:", err);
+      }
+    }, rootRef);
+
+    return () => {
+      // cleanup: kill smoother + revert context
+      try {
+        if (
+          smootherRef.current &&
+          typeof smootherRef.current.kill === "function"
+        ) {
+          smootherRef.current.kill();
+        }
+      } catch (e) {
+        /* ignore */
+      }
+      smootherRef.current = null;
+      ctx.revert();
+      // ensure ScrollTrigger instances cleared
+      ScrollTrigger.refresh();
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" ref={rootRef}>
       <Header
         isNavExpanded={isNavExpanded}
         isItemsExpanded={isItemsExpanded}

@@ -914,3 +914,9 @@ button:focus {
 .meImg {
   background: linear-gradient(180deg, #514f52 0%, #121113 100%);
 }
+.border-bottom {
+  border-bottom: 1px solid #1313131a;
+}
+.border-bottom:last-child {
+  border: none;
+}
