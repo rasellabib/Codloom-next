@@ -1,5 +1,16 @@
 import React from "react";
-const FAQItem = ({ item, index, activeAccordion, toggleAccordion }) => {
+
+type FAQItemProps = {
+  item: {
+    question: string;
+    answer: string;
+  };
+  index: number;
+  activeAccordion: number | null;
+  toggleAccordion: (i: number) => void;
+};
+
+const FAQItem: React.FC<FAQItemProps> = ({ item, index, activeAccordion, toggleAccordion }) => {
   return (
     <div className="accordion-item border-b border-gray-300">
       <button

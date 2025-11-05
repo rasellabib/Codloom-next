@@ -7,19 +7,25 @@ const FAQSection = () => {
     const container = document.getElementById("accordion");
     if (!container) return;
 
-    const items = Array.from(container.querySelectorAll(".accordion-item"));
-    const handlers = [];
+  const items = Array.from(container.querySelectorAll(".accordion-item")) as HTMLElement[];
+    type Handler = {
+      btn: HTMLButtonElement;
+      clickHandler: () => void;
+      keyHandler: (e: KeyboardEvent) => void;
+      it: HTMLElement;
+    };
+    const handlers: Handler[] = [];
 
     function showPlusMinus(btn: HTMLButtonElement, showMinus: boolean) {
-      const plus = btn.querySelector(".svg-plus");
-      const minus = btn.querySelector(".svg-minus");
+      const plus = btn.querySelector(".svg-plus") as HTMLElement | null;
+      const minus = btn.querySelector(".svg-minus") as HTMLElement | null;
       if (plus) plus.classList.toggle("hidden", showMinus); // showMinus=true -> hide plus
       if (minus) minus.classList.toggle("hidden", !showMinus); // showMinus=true -> show minus
     }
 
-    function closeItem(it) {
-      const btn = it.querySelector("button");
-      const panel = it.querySelector(".panel");
+    function closeItem(it: HTMLElement) {
+      const btn = it.querySelector("button") as HTMLButtonElement | null;
+      const panel = it.querySelector(".panel") as HTMLElement | null;
       it.dataset.open = "false";
       if (btn) btn.setAttribute("aria-expanded", "false");
 
@@ -29,24 +35,23 @@ const FAQSection = () => {
         // set current height then collapse to 0 to animate
         panel.style.maxHeight = panel.scrollHeight + "px";
         // force reflow
-        // eslint-disable-next-line no-unused-expressions
-        panel.offsetHeight;
+        void panel.offsetHeight;
         panel.style.maxHeight = "0px";
         panel.style.opacity = "0";
       }
 
       if (btn) showPlusMinus(btn, false); // show plus, hide minus
 
-      const circle = it.querySelector(".circle");
+      const circle = it.querySelector(".circle") as HTMLElement | null;
       if (circle) {
         circle.style.transform = "scale(0.98)";
         setTimeout(() => (circle.style.transform = "scale(1)"), 180);
       }
     }
 
-    function openItem(it) {
-      const btn = it.querySelector("button");
-      const panel = it.querySelector(".panel");
+    function openItem(it: HTMLElement) {
+      const btn = it.querySelector("button") as HTMLButtonElement | null;
+      const panel = it.querySelector(".panel") as HTMLElement | null;
       it.dataset.open = "true";
       if (btn) btn.setAttribute("aria-expanded", "true");
 
@@ -64,7 +69,7 @@ const FAQSection = () => {
 
       if (btn) showPlusMinus(btn, true); // show minus, hide plus
 
-      const circle = it.querySelector(".circle");
+      const circle = it.querySelector(".circle") as HTMLElement | null;
       if (circle) {
         circle.style.transform = "scale(1.03)";
         setTimeout(() => (circle.style.transform = "scale(1)"), 200);
@@ -72,10 +77,10 @@ const FAQSection = () => {
     }
 
     // initialization
-    items.forEach((it: HTMLElement) => {
+    items.forEach((it) => {
       const open = it.dataset.open === "true";
-      const btn = it.querySelector("button");
-      const panel = it.querySelector(".panel");
+      const btn = it.querySelector("button") as HTMLButtonElement | null;
+      const panel = it.querySelector(".panel") as HTMLElement | null;
 
       if (!panel || !btn) return;
 
@@ -86,7 +91,7 @@ const FAQSection = () => {
       panel.style.maxHeight = open ? panel.scrollHeight + "px" : "0px";
       panel.style.opacity = open ? "1" : "0";
 
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
       showPlusMinus(btn, open);
 
       // click handler
@@ -103,27 +108,27 @@ const FAQSection = () => {
       };
 
       // keyboard handler
-      const keyHandler = (e) => {
+      const keyHandler = (e: KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           clickHandler();
         }
       };
 
-      btn.addEventListener("click", clickHandler);
-      btn.addEventListener("keydown", keyHandler);
+  btn.addEventListener("click", clickHandler);
+  btn.addEventListener("keydown", keyHandler as EventListener);
 
       handlers.push({ btn, clickHandler, keyHandler, it });
     });
 
     // recompute open panels on resize
-    let resizeTimeout = null;
+    let resizeTimeout: number | null = null;
     const resizeHandler = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
+      if (resizeTimeout) window.clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(() => {
         items.forEach((it) => {
           if (it.dataset.open === "true") {
-            const panel = it.querySelector(".panel");
+            const panel = it.querySelector(".panel") as HTMLElement | null;
             if (panel) panel.style.maxHeight = panel.scrollHeight + "px";
           }
         });

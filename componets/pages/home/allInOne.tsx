@@ -20,7 +20,15 @@ import { ScrollTrigger, ScrollSmoother, SplitText } from "gsap/all";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
-const Header = ({
+type HeaderProps = {
+  isNavExpanded: boolean;
+  isItemsExpanded: boolean;
+  isMenuOpen: boolean;
+  toggleMenu: () => void;
+  handleSmoothScroll: (e: React.MouseEvent | null, href: string) => void;
+};
+
+const Header: React.FC<HeaderProps> = ({
   isNavExpanded,
   isItemsExpanded,
   isMenuOpen,
@@ -187,7 +195,15 @@ const Header = ({
   );
 };
 
-const MobileMenu = ({ isMenuOpen, handleMobileMenuClick }) => {
+type MobileMenuProps = {
+  isMenuOpen: boolean;
+  handleMobileMenuClick: (e: React.MouseEvent, href: string) => void;
+};
+
+const MobileMenu: React.FC<MobileMenuProps> = ({
+  isMenuOpen,
+  handleMobileMenuClick,
+}) => {
   return (
     <div
       id="mobileMenu"
@@ -238,9 +254,16 @@ const CodloomWebsite = () => {
   const [isLinkVisible, setIsLinkVisible] = useState(false);
 
   // smoother ref so we can use smoother.scrollTo(...) from handlers
-  const smootherRef = useRef(null);
+  // typed with the methods we call (scrollTo, kill) — keep nullable
+  const smootherRef = useRef<
+    | {
+        scrollTo?: (selectorOrPixels: string | number, opts?: Record<string, unknown>) => void;
+        kill?: () => void;
+      }
+    | null
+  >(null);
   // ref for gsap.context scoping
-  const rootRef = useRef(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setTimeout(() => setIsNavExpanded(true), 1800);
@@ -266,31 +289,31 @@ const CodloomWebsite = () => {
   };
 
   // UPDATED: handleSmoothScroll uses smoother if available, otherwise falls back to native
-  const handleSmoothScroll = useCallback((e, href) => {
-    e && e.preventDefault();
-    const target = href?.startsWith("#") ? href : `#${href}`;
-    const targetId = target.slice(1);
+  const handleSmoothScroll = useCallback(
+    (e: React.MouseEvent | null, href: string) => {
+      if (e) e.preventDefault();
+      const target = href?.startsWith("#") ? href : `#${href}`;
+      const targetId = target.slice(1);
 
-    // if ScrollSmoother exists and was created, use its scrollTo
-    if (
-      smootherRef.current &&
-      typeof smootherRef.current.scrollTo === "function"
-    ) {
-      // smoother.scrollTo accepts selector, pixels, or numeric position
-      smootherRef.current.scrollTo(`#${targetId}`, {
-        // duration in seconds (tweak as needed)
-        duration: 0.8,
-        // offset example if you have a fixed header: y: -80
-        offset: 0,
-      });
-    } else {
-      // fallback
-      const el = document.getElementById(targetId);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, []);
+      // if ScrollSmoother exists and was created, use its scrollTo
+      if (smootherRef.current && typeof smootherRef.current.scrollTo === "function") {
+        // smoother.scrollTo accepts selector, pixels, or numeric position
+        smootherRef.current.scrollTo(`#${targetId}`, {
+          // duration in seconds (tweak as needed)
+          duration: 0.8,
+          // offset example if you have a fixed header: y: -80
+          offset: 0,
+        });
+      } else {
+        // fallback
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    []
+  );
 
-  const handleMobileMenuClick = (e, href) => {
+  const handleMobileMenuClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     handleSmoothScroll(null, href);
     setTimeout(() => {
@@ -319,7 +342,17 @@ const CodloomWebsite = () => {
           effects: true,
           normalizeScroll: true,
         });
-        smootherRef.current = smoother;
+        // assign only the pieces we expect (keep typing compatible)
+        smootherRef.current = {
+          scrollTo: (selectorOrPixels: string | number, opts?: Record<string, unknown>) =>
+            // delegate to actual smoother using a safe cast to unknown then expected shape
+            (smoother as unknown as { scrollTo?: (a: string | number, o?: Record<string, unknown>) => void }).scrollTo?.(
+              selectorOrPixels,
+              opts
+            ),
+          kill: () =>
+            (smoother as unknown as { kill?: () => void }).kill?.(),
+        };
 
         // If you use ScrollTrigger that relies on the scroller, refresh once
         ScrollTrigger.addEventListener("refreshInit", () => {
@@ -327,21 +360,19 @@ const CodloomWebsite = () => {
         });
         ScrollTrigger.refresh();
       } catch (err) {
-        // 가능합니다: create() फেইল করলে এখানে লগ দেখাবে
-        // console.warn("ScrollSmoother init failed:", err);
+        // Log initialization error for debugging
+        console.warn("ScrollSmoother init failed:", err);
       }
     }, rootRef);
 
     return () => {
       // cleanup: kill smoother + revert context
       try {
-        if (
-          smootherRef.current &&
-          typeof smootherRef.current.kill === "function"
-        ) {
-          smootherRef.current.kill();
+        if (smootherRef.current && typeof smootherRef.current.kill === "function") {
+          // optional chaining to satisfy TS
+          smootherRef.current.kill?.();
         }
-      } catch (e) {
+      } catch {
         /* ignore */
       }
       smootherRef.current = null;

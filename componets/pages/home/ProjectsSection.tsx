@@ -5,8 +5,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectsSection = ({ handleSmoothScroll }) => {
-  const sectionRef = useRef(null);
+type ProjectsSectionProps = {
+  handleSmoothScroll: (e: React.MouseEvent | null, href: string) => void;
+};
+
+const ProjectsSection: React.FC<ProjectsSectionProps> = ({ handleSmoothScroll }) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,8 +29,8 @@ const ProjectsSection = ({ handleSmoothScroll }) => {
         duration: 0.5,
       });
 
-      gsap.utils.toArray(".WorkCard .work-cards").forEach((card, i) => {
-        gsap.from(card, {
+      gsap.utils.toArray<HTMLElement>(".WorkCard .work-cards").forEach((card, i) => {
+        gsap.from(card as HTMLElement, {
           scrollTrigger: {
             trigger: card,
             start: "top 80%",

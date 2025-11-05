@@ -1,7 +1,15 @@
 import React from "react";
 
 // Header Component
-const Header = ({
+type HeaderProps = {
+  isNavExpanded: boolean;
+  isItemsExpanded: boolean;
+  isMenuOpen: boolean;
+  toggleMenu: () => void;
+  handleSmoothScroll: (e: React.MouseEvent | null, href: string) => void;
+};
+
+const Header: React.FC<HeaderProps> = ({
   isNavExpanded,
   isItemsExpanded,
   isMenuOpen,

@@ -1,7 +1,12 @@
 import React from "react";
 
 // Mobile Menu Component
-const MobileMenu = ({ isMenuOpen, handleMobileMenuClick }) => {
+type MobileMenuProps = {
+  isMenuOpen: boolean;
+  handleMobileMenuClick: (e: React.MouseEvent, href: string) => void;
+};
+
+const MobileMenu: React.FC<MobileMenuProps> = ({ isMenuOpen, handleMobileMenuClick }) => {
   return (
     <div
       id="mobileMenu"

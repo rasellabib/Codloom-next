@@ -70,7 +70,7 @@ const ContactForm = () => {
           <textarea
             className="h6 lexend md:rounded-[10px] rounded-[8px] md:px-[16px] px-[10px] py-[12px] text-[#9D9D9D] border-[#E3E3E3] bg-[#F7F7F5] border-[1px] focus:outline-none focus:ring-2 focus:ring-[#FF6817]"
             name="textarea"
-            rows="5"
+            rows={5}
             id="textarea"
             placeholder="Tell us more about your project"
           ></textarea>

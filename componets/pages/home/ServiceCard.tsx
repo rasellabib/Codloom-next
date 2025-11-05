@@ -1,7 +1,12 @@
 import React from "react";
 
 // Service Card Component
-const ServiceCard = ({ service, index }) => {
+type Service = {
+  title: string;
+  description?: string;
+};
+
+const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
   return (
     <div
       className={`single-service bg-white rounded-3xl lg:p-[32px] md:p-[26px] p-[26px] card-shadow hover:-translate-y-1 transition-all duration-500 text-left flex flex-col md:gap-[80px] gap-[50px] ${

@@ -1,7 +1,12 @@
 import React from "react";
 
 // Sticky Link Component
-const StickyLink = ({ isLinkVisible, handleSmoothScroll }) => {
+type StickyLinkProps = {
+  isLinkVisible: boolean;
+  handleSmoothScroll: (e: React.MouseEvent | null, href: string) => void;
+};
+
+const StickyLink: React.FC<StickyLinkProps> = ({ isLinkVisible, handleSmoothScroll }) => {
   return (
     <section className={`cl-link ${isLinkVisible ? "visible" : ""}`}>
       <div className="cl-link-inner flex items-center md:justify-between justify-center">

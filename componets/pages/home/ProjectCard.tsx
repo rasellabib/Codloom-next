@@ -1,7 +1,13 @@
 import React from 'react';
 
+type Project = {
+  img: string;
+  title: string;
+  description?: string;
+};
+
 // Project Card Component
-const ProjectCard = ({ project }) => {
+const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   return (
     <div className="cursor-pointer work-cards hover:text-[#FF6817] transition-colors duration-500">
       <div className="work-img lg:mb-[20px] mb-[15px] overflow-hidden rounded-[20px]">

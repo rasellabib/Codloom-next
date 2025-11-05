@@ -6,8 +6,12 @@ import { ScrollTrigger, ScrollSmoother, SplitText } from "gsap/all";
 // রেজিস্টার প্লাগইন (একবার করে রাখা ঠিক)
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
-const FooterSec = ({ handleSmoothScroll }) => {
-  const rootRef = useRef(null);
+type FooterSecProps = {
+  handleSmoothScroll: (e: React.MouseEvent | null, href: string) => void;
+};
+
+const FooterSec: React.FC<FooterSecProps> = ({ handleSmoothScroll }) => {
+  const rootRef = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
     // safety: যদি ScrollTrigger না থাকে তো কিছু না কর
@@ -93,7 +97,7 @@ const FooterSec = ({ handleSmoothScroll }) => {
       // revert context (kills animations & ScrollTriggers created inside)
       try {
         ctx.revert();
-      } catch (e) {
+      } catch {
         // ignore
       }
       // extra safety: remove any leftover scrolltriggers created elsewhere (optional)
